@@ -54,9 +54,8 @@ resource "aws_default_route_table" "main-rtb" {
 
 }
 
-#create security group
-resource "aws_security_group" "myapp-sg" {
-    name = "myapp-sg"
+#config default security group
+resource "aws_default_security_group" "default-sg" {
     vpc_id = aws_vpc.myapp-vpc.id 
     
     #incoming traffic rules
@@ -83,7 +82,7 @@ resource "aws_security_group" "myapp-sg" {
         prefix_list_ids = []
 }
     tags = {
-            Name: "${var.env_prefix}-sg"
+            Name: "${var.env_prefix}-default-sg"
         }
 
 }
