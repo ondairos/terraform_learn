@@ -7,6 +7,7 @@ variable subnet_cidr_block {}
 variable avail_zone {}
 variable env_prefix {}
 
+
 resource "aws_vpc" "myapp-vpc" {
     cidr_block = var.vpc_cidr_block
     tags = {
@@ -24,3 +25,30 @@ resource "aws_subnet" "myapp-subnet-1" {
 }
 
 #create resources for vpc route table, that enables it to connect to the internet
+
+#create internet gateway
+resource "aws_internet_gateway" "myapp-igw" {
+    vpc_id = aws_vpc.myapp-vpc.id
+
+    tags = {
+        Name: "${var.env_prefix}-igw"
+    }    
+
+}
+
+
+resource "aws_route_table" "myapp-route-table" {
+    vpc_id = aws_vpc.myapp-vpc.id
+
+    route {
+        #handle the internet gateway
+        cidr_block = "0.0.0.0/0"
+        gateway_id = aws_internet_gateway.myapp-igw.id
+    }
+    
+        tags = {
+            Name: "${var.env_prefix}-rtb"
+        }
+    
+
+}
