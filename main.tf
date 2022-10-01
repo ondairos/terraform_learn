@@ -8,6 +8,7 @@ variable avail_zone {}
 variable env_prefix {}
 variable my_ip {}
 variable instance_type {}
+variable my_public_key {}
 
 
 resource "aws_vpc" "myapp-vpc" {
@@ -108,7 +109,10 @@ output "aws_ami_id" {
 
 
 #create ssh key pair
-
+resource "aws_key_pair" "ssh-key" {
+    key_name = "server-key"
+    public_key = var.my_public_key
+}
 
 
 #create aws instance EC2
@@ -121,7 +125,7 @@ resource "aws_instance" "myapp-server" {
     availability_zone = var.avail_zone
 
     associate_public_ip_address = true
-    key_name = "server-key-pair"
+    key_name = aws_key_pair.ssh-key.key_name
 
     tags = {
         Name: "${var.env_prefix}-server"
