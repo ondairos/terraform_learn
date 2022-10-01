@@ -1,0 +1,9 @@
+#local terraform directory for ignores
+.terraform/*
+
+#tf state files ignore
+*.tfstate
+*.tfstate.*
+
+#tf variable files ignore, sens data
+*.tfvars
