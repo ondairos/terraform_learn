@@ -7,3 +7,5 @@
 
 #tf variable files ignore, sens data
 *.tfvars
+
+*.pem
