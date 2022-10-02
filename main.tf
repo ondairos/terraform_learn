@@ -2,32 +2,30 @@ provider "aws" {
     region = "eu-central-1"
 }
 
-resource "aws_vpc" "myapp-vpc" {
-    cidr_block = var.vpc_cidr_block
-    tags = {
-        Name : "${var.env_prefix}-vpc"
-        }
-}
+module "vpc" {
+  source = "terraform-aws-modules/vpc/aws"
 
-#create module for the subnet
-module "myapp-subnet" {
-    source = "./modules/subnet"
-    subnet_cidr_block = var.subnet_cidr_block
-    avail_zone = var.avail_zone
-    env_prefix = var.env_prefix
-    vpc_id = aws_vpc.myapp-vpc.id
-    default_route_table_id = aws_vpc.myapp-vpc.default_route_table_id
+  name = "my-vpc"
+  cidr = var.vpc_cidr_block
+
+  azs             = [var.avail_zone]
+  public_subnets  = [var.subnet_cidr_block]
+  public_subnet_tags = { Name = "${var.env_prefix}-subnet-1" }
+
+  tags = {
+    Name = "${var.env_prefix}-vpc"
+  }
 }
 
 
 module "myapp-server" {
     source ="./modules/webserver"
-    vpc_id = aws_vpc.myapp-vpc.id
+    vpc_id = module.vpc.vpc_id
     my_ip = var.my_ip
     env_prefix = var.env_prefix
     image_name = var.image_name
     my_public_key = var.my_public_key
     instance_type =  var.instance_type
-    subnet_id = module.myapp-subnet.subnet.id
+    subnet_id = module.vpc.public_subnets[0] #get first element of subnets array
     avail_zone = var.avail_zone
 }
