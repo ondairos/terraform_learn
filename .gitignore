@@ -9,3 +9,11 @@
 *.tfvars
 
 *.pem
+
+
+#ignore cli conf files
+.terraformrc
+terraform.rc
+
+#ignore crash logs
+crash.log
