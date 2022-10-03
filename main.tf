@@ -39,3 +39,4 @@ module "myapp-server" {
     subnet_id = module.vpc.public_subnets[0] #get first element of subnets array
     avail_zone = var.avail_zone
 }
+
